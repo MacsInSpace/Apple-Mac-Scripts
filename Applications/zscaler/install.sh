@@ -2,7 +2,7 @@
 
 # Enhanced Zscaler Client Connector installer with error checking
 # Run direct with:
-# sudo bash < <(curl -Ls https://github.com/MacsInSpace/Apple-Mac-Scripts/edit/main/Applications/zscaler/install.sh)
+# sudo bash < <(curl -Ls https://raw.githubusercontent.com/MacsInSpace/Apple-Mac-Scripts/refs/heads/main/Applications/zscaler/install.sh)
 # 
 # $env:eduvic=0
 # Exit on any error, treat unset variables as error, pipefail for pipeline errors
