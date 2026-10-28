@@ -3,8 +3,10 @@
 # Microsoft Office 365 Installer (postflight)
 # =============================================================================
 # Run direct with
-# sudo bash < <(curl -Ls http://Installer.sh)
-# Bundle the following in your .pkg payload at /private/var/tmp/ms_office_install:
+#
+# sudo bash < <(curl -Ls https://raw.githubusercontent.com/MacsInSpace/Apple-Mac-Scripts/refs/heads/main/Applications/MS%20Office%20365/Install.sh)
+#
+#	Bundle the following in your .pkg payload at /private/var/tmp/ms_office_install:
 #   Microsoft_Office_LTSC_2024_VL_Serializer.pkg  (for macOS 14+ / Office 365)
 #   Microsoft_Office_LTSC_2021_VL_Serializer.pkg  (for macOS 11-13 / Office 16.88-16.101)
 #
@@ -77,7 +79,7 @@ VERSION=""
 
 # Icon for SwiftDialog
 # Replace with a local path if you bundle an icon in your pkg payload
-DIALOG_ICON="https://gitlab.edustar.tech/TSSP/apple-scripts/-/raw/main/Applications/MS%20Office%20365/68747470733a2f2f69636f6e732e69636f6e617263686976652e636f6d2f69636f6e732f626c61636b76617269616e742f627574746f6e2d75692d6d6963726f736f66742d6f66666963652d617070732f313032342f4d6963726f736f66742d4f66666963652d69636f6e2e706e67.png"
+DIALOG_ICON="https://raw.githubusercontent.com/MacsInSpace/Apple-Mac-Scripts/refs/heads/main/Applications/MS%20Office%20365/support/icon.png"
 
 # --- Detect logged-in console user -------------------------------------------
 CONSOLE_USER=$(scutil <<< "show State:/Users/ConsoleUser" \
