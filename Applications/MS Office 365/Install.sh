@@ -48,12 +48,13 @@ WORK_DIR="/private/var/tmp/ms_office_install"
 # Serializer source - set to a stable URL or a local path
 # Local path example:  "$WORK_DIR/Microsoft_Office_LTSC_2024_VL_Serializer.pkg"
 # URL example:         "https://yourserver.example.com/pkgs/Microsoft_Office_LTSC_2024_VL_Serializer.pkg"
+# https://github.com/MacsInSpace/Apple-Mac-Scripts/raw/refs/heads/main/Applications/MS%20Office%20365/support/serializer/Microsoft_Office_LTSC_2024_VL_Serializer.pkg
 # Serializer sources: prefer bundled pkgs in WORK_DIR, else download from GitLab
 SERIALIZER_2024_LOCAL_SRC="$WORK_DIR/Microsoft_Office_LTSC_2024_VL_Serializer.pkg"
 SERIALIZER_2021_LOCAL_SRC="$WORK_DIR/Microsoft_Office_LTSC_2021_VL_Serializer.pkg"
 
-SERIALIZER_2024_WEB_SRC="https://Microsoft_Office_LTSC_2024_VL_Serializer.pkg"
-SERIALIZER_2021_WEB_SRC="https://Microsoft_Office_LTSC_2021_VL_Serializer.pkg"
+SERIALIZER_2024_WEB_SRC="https://github.com/MacsInSpace/Apple-Mac-Scripts/raw/refs/heads/main/Applications/MS%20Office%20365/support/serializer/Microsoft_Office_LTSC_2024_VL_Serializer.pkg"
+SERIALIZER_2021_WEB_SRC="https://github.com/MacsInSpace/Apple-Mac-Scripts/raw/refs/heads/main/Applications/MS%20Office%20365/support/serializer/Microsoft_Office_LTSC_2021_VL_Serializer.pkg"
 
 if [[ -f "$SERIALIZER_2024_LOCAL_SRC" ]]; then
     SERIALIZER_2024_SRC="$SERIALIZER_2024_LOCAL_SRC"
