@@ -17,11 +17,15 @@
 #   ZCC_UNATTENDEDMODEUI=none   (default: none)
 #   ZCC_MODE=unattended         (default: unattended)
 #   ZCC_EXTRA_ARGS="--foo 1"    Anything else, passed straight to the installer
+#   ZCC_TRAIN=<prefix>          Pin to a release train, e.g. 4.5.2 or 4.7 (default: newest GA)
+#
+# Only GA ("Release Available") builds are ever selected. Limited Availability is ignored.
 #
 # Examples:
 #   sudo EDUVIC=true bash < <(curl -Ls <url>)
 #   sudo ZCC_CLOUDNAME=zscalertwo ZCC_USERDOMAIN=example.com bash < <(curl -Ls <url>)
 #   sudo EDUVIC=true ZCC_EXTRA_ARGS="--strictEnforcement 1" bash < <(curl -Ls <url>)
+#   sudo EDUVIC=true ZCC_TRAIN=4.5.2 bash < <(curl -Ls <url>)
 #
 # Explicit ZCC_* values always win over the EDUVIC preset.
 
@@ -62,6 +66,13 @@ ZCC_STRICTENFORCEMENT="${ZCC_STRICTENFORCEMENT:-}"
 ZCC_UNATTENDEDMODEUI="${ZCC_UNATTENDEDMODEUI:-none}"
 ZCC_MODE="${ZCC_MODE:-unattended}"
 ZCC_EXTRA_ARGS="${ZCC_EXTRA_ARGS:-}"
+ZCC_TRAIN="${ZCC_TRAIN:-}"
+ZCC_TRAIN="${ZCC_TRAIN%.}"   # tolerate a trailing dot, e.g. "4.5.2."
+
+if [[ -n "$ZCC_TRAIN" && ! "$ZCC_TRAIN" =~ ^[0-9]+(\.[0-9]+)*$ ]]; then
+    echo "Error: ZCC_TRAIN must look like 4, 4.7 or 4.5.2 (got: $ZCC_TRAIN)"
+    exit 1
+fi
 
 loggedInUser=$(stat -f%Su /dev/console)
 userID=$(id -u "$loggedInUser")
@@ -72,6 +83,7 @@ year=$(date '+%Y')
 log "=== Zscaler Installation Started: $(date) ==="
 log "Logged in user: $loggedInUser"
 log "EDUVIC preset: $EDUVIC"
+log "Release train: ${ZCC_TRAIN:-newest GA}"
 
 # Temp paths are set once the version is known; declared here so the trap is safe under set -u
 THEZIP=""
@@ -155,6 +167,13 @@ fi
 # ---- Find latest version ----
 DLdomain='https://d32a6ru7mhaq0c.cloudfront.net'
 
+# Train filter regex: "4.5.2" matches 4.5.2 and 4.5.2.x, but not 4.5.20.x
+if [[ -n "$ZCC_TRAIN" ]]; then
+    TRAIN_REGEX="^${ZCC_TRAIN//./\\.}(\\.|$)"
+else
+    TRAIN_REGEX="."
+fi
+
 get_latest_version() {
     local feed_year="$1"
     local url="https://help.zscaler.com/rss-feed/zscaler-client-connector/client-connector-app-release-summary-$feed_year/macOS"
@@ -163,6 +182,7 @@ get_latest_version() {
         xmllint --xpath "//rss/channel/item[category='Release Available']/version" - 2>/dev/null |
         grep -oE '<version>[0-9.]+</version>' |
         sed -E 's/<version>//; s/<\/version>//' |
+        grep -E "$TRAIN_REGEX" |
         sort -rV |
         head -n 1 || true
 }
@@ -171,13 +191,13 @@ log "Checking for latest available Zscaler version from RSS feed..."
 LatestVersion=$(get_latest_version "$year")
 
 if [[ -z "$LatestVersion" ]]; then
-    log "No available versions found in $year RSS feed. Trying previous year..."
+    log "No GA versions${ZCC_TRAIN:+ for train $ZCC_TRAIN} found in $year RSS feed. Trying previous year..."
     year=$((year - 1))
     LatestVersion=$(get_latest_version "$year")
 fi
 
 if [[ -z "$LatestVersion" ]]; then
-    log "Error: Could not determine latest Zscaler version from RSS feed"
+    log "Error: Could not determine latest GA Zscaler version${ZCC_TRAIN:+ for train $ZCC_TRAIN} from RSS feed"
     exit 1
 fi
 
